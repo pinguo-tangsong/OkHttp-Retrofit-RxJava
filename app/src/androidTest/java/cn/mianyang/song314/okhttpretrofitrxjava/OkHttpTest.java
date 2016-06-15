@@ -1,6 +1,9 @@
 package cn.mianyang.song314.okhttpretrofitrxjava;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
+
+import com.github.simonpercic.oklog3.OkLogInterceptor;
 
 import java.io.IOException;
 
@@ -9,6 +12,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * time: 6/15/16
@@ -28,7 +32,12 @@ public class OkHttpTest extends BaseInstrumentationTestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
+        OkLogInterceptor okLogInterceptor =
+                OkLogInterceptor.builder()
+                        .build();
         mOkHttpClient = new OkHttpClient.Builder()
+                    .addInterceptor(okLogInterceptor)
+                    .addInterceptor(createHttpLoggingInterceptor())
                     .build();
     }
 
@@ -81,6 +90,14 @@ public class OkHttpTest extends BaseInstrumentationTestCase {
                 .build();
         //new call
         return mOkHttpClient.newCall(request);
+    }
+
+    @NonNull
+    private static HttpLoggingInterceptor createHttpLoggingInterceptor() {
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        return httpLoggingInterceptor;
     }
 
 }
