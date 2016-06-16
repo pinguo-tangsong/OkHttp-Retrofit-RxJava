@@ -9,8 +9,10 @@ import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 
@@ -69,7 +71,6 @@ public class OkHttpTest extends BaseInstrumentationTestCase {
         autoWait();
     }
 
-
     public void testExecute() {
         Call call = buildCall(mOkHttpClient);
         try {
@@ -81,6 +82,32 @@ public class OkHttpTest extends BaseInstrumentationTestCase {
             e.printStackTrace();
         }
 
+    }
+
+    public void testPost() {
+        //构建请求参数
+        RequestBody formBody = new FormBody.Builder()
+                .add("url", "http://blog.csdn.net/lmj623565791/article/details/48129405")
+                .add("desc", "Camera360")
+                .add("who", "314")
+                .add("type", "Android")
+                .add("debug", "true")
+                .build();
+
+        //构建请求
+        Request request = new Request.Builder()
+                .url("https://gank.io/api/add2gank")
+                .post(formBody)
+                .build();
+
+        Call call = mOkHttpClient.newCall(request);
+        try {
+            Response response = call.execute();
+            Log.i("song", "post result = " + response.body().string());
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
     }
 
     private Call buildCall(OkHttpClient mOkHttpClient) {
